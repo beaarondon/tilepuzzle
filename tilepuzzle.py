@@ -7,21 +7,21 @@ T = TypeVar("T")   # List[List[int]]
 
 
 def tilepuzzle(start: T, goal: T) -> List[T]:
-    return reverse(statesearch([start], goal, []))   # reverse to: start -> goal
+    return reverse(statesearch([start], goal, [], [start]))   # reverse to: start -> goal
 
 
-def statesearch(unexplored: List, goal: T, path: List) -> List[T]:
+def statesearch(unexplored: List, goal: T, path: List, explored: List) -> List[T]:
     if unexplored == []:   # no more states left to explore
         return []   # no path found to goal
     elif goal == head(unexplored):   # if the oldest entry == goal
         return conc(goal, path)
     else:
         # expand current state, add new states to unexplored list
-        result = statesearch(generateNewStates(head(unexplored)), goal, conc(head(unexplored), path))
+        result = statesearch(generateNewStates(head(unexplored), explored), goal, conc(head(unexplored), path), explored)
         if result != []:   # if a path to the goal was found
             return result
         else:
-            return statesearch(tail(unexplored), goal, path)   # RECURSE; tail = everything EXCEPT head = [1:]
+            return statesearch(tail(unexplored), goal, path, explored)   # RECURSE; tail = everything EXCEPT head = [1:]
 
 ###
 
@@ -82,27 +82,31 @@ def reverseEach(listOfLists: List[T]) -> List[T]:
     return result
 
 
-def generateNewStates(curState: T) -> List:   # add all new possible moves to list of unexplored states
+def generateNewStates(curState: T, explored: List) -> List:   # add all new possible moves to list of unexplored states
     newStates = []
     u = moveU(curState)
     d = moveD(curState)
     l = moveL(curState)
     r = moveR(curState)
-    if u is not None and u not in newStates:
-        conc(u, newStates)
-    if d is not None and d not in newStates:
-        conc(d, newStates)
-    if l is not None and l not in newStates:
-        conc(l, newStates)
-    if r is not None and r not in newStates:
-        conc(r, newStates)
+    if u is not None and u not in explored:
+        newStates = conc(u, newStates)
+        explored.append(u)
+    if d is not None and d not in explored:
+        newStates = conc(d, newStates)
+        explored.append(d)
+    if l is not None and l not in explored:
+        newStates = conc(l, newStates)
+        explored.append(l)
+    if r is not None and r not in explored:
+        newStates = conc(r, newStates)
+        explored.append(r)
     return newStates
     # add all generated new states to unexplored list
 
 ###
 
 def conc(item: T, list: List[T]):
-    return [item] + list
+    return list + [item]
 def head(list):
     return list[0]
 def tail(list):
