@@ -7,7 +7,7 @@ T = TypeVar("T")   # List[List[int]]
 
 
 def tilepuzzle(start: T, goal: T) -> List[T]:
-    return reverse(statesearch([start], goal, [], [start], []))   # reverse to: start -> goal
+    return (statesearch([start], goal, [], [start], []))   # reverse to: start -> goal
 
 
 def statesearch(unexplored: List, goal: T, path: List, generated: List, newStates: List) -> List[T]:
@@ -16,6 +16,14 @@ def statesearch(unexplored: List, goal: T, path: List, generated: List, newState
             newStates = conc(state, newStates)
         if state in path and state in newStates:
             newStates.remove(state)
+
+    """
+    BRUTE FORCE REMOVE DUPLICATE STATES (delete section to see)
+    """
+    if len(path) >= 2:
+        if path[len(path)-1] == path[len(path)-2]:
+            path.remove(path[len(path)-1])
+
     if unexplored == []:   # no more states left to explore
         return []   # no path found to goal
     elif goal == head(unexplored):   # if the oldest entry == goal
@@ -26,9 +34,7 @@ def statesearch(unexplored: List, goal: T, path: List, generated: List, newState
         if result != []:   # if a path to the goal was found
             return result
         else:
-            return statesearch(tail(unexplored), goal, path, generated, newStates)   # RECURSE; tail = everything EXCEPT head = [1:]
-
-###
+            return statesearch(tail(unexplored), goal, generated, newStates)   # RECURSE; tail = everything EXCEPT head = [1:]
 
 def moveU(curState: T):
     for row in range(len(curState)):
@@ -61,7 +67,6 @@ def moveR(curState: T):
                 replacement = curState[row][col+1]
                 return generateNew(curState, row, col, 0, replacement, "r")
     return None
-###
 
 def generateNew(curState: T, row: int, col: int, empty: int, replacement: int, movement: str) -> List[T]:
     return swap(curState, row, col, empty, replacement, movement)
@@ -79,13 +84,11 @@ def swap(oldState: T, row: int, col: int, empty: int, replacement: int, movement
         newState[row][col+1] = empty
     return newState
 
-
 def reverseEach(listOfLists: List[T]) -> List[T]:
     result = []
     for list in listOfLists:
         result.append(reverse(list))
     return result
-
 
 def generateNewStates(curState: T, generated: List, newStates: List) -> List:   # add all new possible moves to list of unexplored states
     u = moveU(curState)
@@ -107,13 +110,11 @@ def generateNewStates(curState: T, generated: List, newStates: List) -> List:   
     return newStates
     # add all generated new states to unexplored list
 
-###
-
 def conc(item: T, list: List[T]):
     return list + [item]
-def head(list):
+def head(list: List[T]):
     return list[0]
-def tail(list):
+def tail(list: List[T]):
     return list[1:]
-def reverse(list):
+def reverse(list: List[T]):
     return list[::-1]
