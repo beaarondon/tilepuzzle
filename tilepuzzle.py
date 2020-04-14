@@ -1,10 +1,7 @@
 from typing import List, TypeVar
 from copy import deepcopy
-# from collections import deque
-# should i make a deque??
 
 T = TypeVar("T")   # List[List[int]]
-
 
 def tilepuzzle(start: T, goal: T) -> List[T]:
     return (statesearch([start], goal, [], [start], []))   # reverse to: start -> goal
@@ -16,21 +13,22 @@ def statesearch(unexplored: List, goal: T, path: List, generated: List, newState
             newStates = conc(state, newStates)
         if state in path and state in newStates:
             newStates.remove(state)
-
     """
-    BRUTE FORCE REMOVE DUPLICATE STATES (delete section to see)
+    START: BRUTE FORCE REMOVE DUPLICATE STATES (delete section to see)
     """
     if len(path) >= 2:
         if path[len(path)-1] == path[len(path)-2]:
             path.remove(path[len(path)-1])
-
+    """
+    END: BRUTE FORCE REMOVE DUPLICATE STATES
+    """
     if unexplored == []:   # no more states left to explore
         return []   # no path found to goal
     elif goal == head(unexplored):   # if the oldest entry == goal
         return conc(goal, path)
     else:
         # expand current state, add new states to unexplored list
-        result = statesearch(generateNewStates(head(unexplored), generated, newStates), goal, conc(head(unexplored), path), generated, newStates)
+        result = statesearch(generateNewStates(head(unexplored), generated, newStates), goal, conc(head(unexplored), path), generated, newStates)   ##### WHY DOES THIS DO TWICE?
         if result != []:   # if a path to the goal was found
             return result
         else:
