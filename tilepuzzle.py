@@ -52,7 +52,7 @@ def moveL(curState: T):
 def moveR(curState: T):
     for row in range(len(curState)):
         for col in range(len(curState[0])):
-            if curState[row][col] == 0 and col+1 < row:
+            if curState[row][col] == 0 and col+1 < len(curState):
                 replacement = curState[row][col+1]
                 return generateNew(curState, row, col, 0, replacement, "r")
     return None
