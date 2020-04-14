@@ -31,28 +31,31 @@ def moveU(curState: T):
             if curState[row][col] == 0 and row-1 >= 0:
                 replacement = curState[row-1][col]
                 return generateNew(curState, row, col, 0, replacement, "u")
+    return None
 
 def moveD(curState: T):
     for row in range(len(curState)):
-        for col in range(row):
+        for col in range(len(curState[0])):
             if curState[row][col] == 0 and row+1 < len(curState):
                 replacement = curState[row+1][col]
                 return generateNew(curState, row, col, 0, replacement, "d")
+    return None
 
 def moveL(curState: T):
     for row in range(len(curState)):
-        for col in range(row):
+        for col in range(len(curState[0])):
             if curState[row][col] == 0 and col-1 >= 0:
                 replacement = curState[row][col-1]
                 return generateNew(curState, row, col, 0, replacement, "l")
+    return None
 
 def moveR(curState: T):
     for row in range(len(curState)):
-        for col in range(row):
+        for col in range(len(curState[0])):
             if curState[row][col] == 0 and col+1 < row:
                 replacement = curState[row][col+1]
                 return generateNew(curState, row, col, 0, replacement, "r")
-
+    return None
 ###
 
 def generateNew(curState: T, row: int, col: int, empty: int, replacement: int, movement: str) -> List[T]:
@@ -60,8 +63,7 @@ def generateNew(curState: T, row: int, col: int, empty: int, replacement: int, m
     result.append(swap(curState, row, col, empty, replacement, movement))
     return result
 
-def swap(oldState: T, row: int, col: int, empty: int, replacement: int, movement: str) -> List[T]:
-    newState = deepcopy(oldState)
+def swap(newState: T, row: int, col: int, empty: int, replacement: int, movement: str) -> List[T]:
     newState[row][col] = deepcopy(replacement)
     if movement.lower() == "u":
         newState[row-1][col] = empty
@@ -84,13 +86,13 @@ def reverseEach(listOfLists: List[T]) -> List[T]:
 def generateNewStates(curState: T) -> List:   # add all new possible moves to list of unexplored states
     newStates = []
     if moveU(curState) is not None:
-        newStates += moveU(curState)
+        conc(moveU(curState), newStates)
     if moveD(curState) is not None:
-        newStates += moveD(curState)
+        conc(moveD(curState), newStates)
     if moveL(curState) is not None:
-        newStates += moveL(curState)
+        conc(moveL(curState), newStates)
     if moveR(curState) is not None:
-        newStates += moveR(curState)
+        conc(moveR(curState), newStates)
     return newStates
     # add all generated new states to unexplored list
 
