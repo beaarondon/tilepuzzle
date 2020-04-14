@@ -7,21 +7,26 @@ T = TypeVar("T")   # List[List[int]]
 
 
 def tilepuzzle(start: T, goal: T) -> List[T]:
-    return reverse(statesearch([start], goal, [], [start]))   # reverse to: start -> goal
+    return reverse(statesearch([start], goal, [], [start], []))   # reverse to: start -> goal
 
 
-def statesearch(unexplored: List, goal: T, path: List, explored: List) -> List[T]:
+def statesearch(unexplored: List, goal: T, path: List, generated: List, newStates: List) -> List[T]:
+    for state in unexplored:
+        if state not in newStates:
+            newStates = conc(state, newStates)
+        if state in path and state in newStates:
+            newStates.remove(state)
     if unexplored == []:   # no more states left to explore
         return []   # no path found to goal
     elif goal == head(unexplored):   # if the oldest entry == goal
         return conc(goal, path)
     else:
         # expand current state, add new states to unexplored list
-        result = statesearch(generateNewStates(head(unexplored), explored), goal, conc(head(unexplored), path), explored)
+        result = statesearch(generateNewStates(head(unexplored), generated, newStates), goal, conc(head(unexplored), path), generated, newStates)
         if result != []:   # if a path to the goal was found
             return result
         else:
-            return statesearch(tail(unexplored), goal, path, explored)   # RECURSE; tail = everything EXCEPT head = [1:]
+            return statesearch(tail(unexplored), goal, path, generated, newStates)   # RECURSE; tail = everything EXCEPT head = [1:]
 
 ###
 
@@ -82,24 +87,23 @@ def reverseEach(listOfLists: List[T]) -> List[T]:
     return result
 
 
-def generateNewStates(curState: T, explored: List) -> List:   # add all new possible moves to list of unexplored states
-    newStates = []
+def generateNewStates(curState: T, generated: List, newStates: List) -> List:   # add all new possible moves to list of unexplored states
     u = moveU(curState)
     d = moveD(curState)
     l = moveL(curState)
     r = moveR(curState)
-    if u is not None and u not in explored:
+    if u is not None and u not in generated:
         newStates = conc(u, newStates)
-        explored.append(u)
-    if d is not None and d not in explored:
+        generated.append(u)
+    if d is not None and d not in generated:
         newStates = conc(d, newStates)
-        explored.append(d)
-    if l is not None and l not in explored:
+        generated.append(d)
+    if l is not None and l not in generated:
         newStates = conc(l, newStates)
-        explored.append(l)
-    if r is not None and r not in explored:
+        generated.append(l)
+    if r is not None and r not in generated:
         newStates = conc(r, newStates)
-        explored.append(r)
+        generated.append(r)
     return newStates
     # add all generated new states to unexplored list
 
