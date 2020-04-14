@@ -59,11 +59,10 @@ def moveR(curState: T):
 ###
 
 def generateNew(curState: T, row: int, col: int, empty: int, replacement: int, movement: str) -> List[T]:
-    result = []
-    result.append(swap(curState, row, col, empty, replacement, movement))
-    return result
+    return swap(curState, row, col, empty, replacement, movement)
 
-def swap(newState: T, row: int, col: int, empty: int, replacement: int, movement: str) -> List[T]:
+def swap(oldState: T, row: int, col: int, empty: int, replacement: int, movement: str) -> List[T]:
+    newState = deepcopy(oldState)
     newState[row][col] = deepcopy(replacement)
     if movement.lower() == "u":
         newState[row-1][col] = empty
@@ -85,14 +84,18 @@ def reverseEach(listOfLists: List[T]) -> List[T]:
 
 def generateNewStates(curState: T) -> List:   # add all new possible moves to list of unexplored states
     newStates = []
-    if moveU(curState) is not None:
-        conc(moveU(curState), newStates)
-    if moveD(curState) is not None:
-        conc(moveD(curState), newStates)
-    if moveL(curState) is not None:
-        conc(moveL(curState), newStates)
-    if moveR(curState) is not None:
-        conc(moveR(curState), newStates)
+    u = moveU(curState)
+    d = moveD(curState)
+    l = moveL(curState)
+    r = moveR(curState)
+    if u is not None and moveU(curState) not in newStates:
+        conc(u, newStates)
+    if d is not None and moveD(curState) not in newStates:
+        conc(d, newStates)
+    if l is not None and moveL(curState) not in newStates:
+        conc(l, newStates)
+    if r is not None and moveR(curState) not in newStates:
+        conc(r, newStates)
     return newStates
     # add all generated new states to unexplored list
 
