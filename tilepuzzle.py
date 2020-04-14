@@ -88,13 +88,13 @@ def generateNewStates(curState: T) -> List:   # add all new possible moves to li
     d = moveD(curState)
     l = moveL(curState)
     r = moveR(curState)
-    if u is not None and moveU(curState) not in newStates:
+    if u is not None and u not in newStates:
         conc(u, newStates)
-    if d is not None and moveD(curState) not in newStates:
+    if d is not None and d not in newStates:
         conc(d, newStates)
-    if l is not None and moveL(curState) not in newStates:
+    if l is not None and l not in newStates:
         conc(l, newStates)
-    if r is not None and moveR(curState) not in newStates:
+    if r is not None and r not in newStates:
         conc(r, newStates)
     return newStates
     # add all generated new states to unexplored list
