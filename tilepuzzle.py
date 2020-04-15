@@ -4,7 +4,7 @@ from copy import deepcopy
 T = TypeVar("T")   # List[List[int]]
 
 def tilepuzzle(start: T, goal: T) -> List[T]:
-    return (statesearch([start], goal, [], [start], []))   # reverse to: start -> goal
+    return (statesearch([start], goal, [], [start], []))
 
 
 def statesearch(unexplored: List, goal: T, path: List, generated: List, newStates: List) -> List[T]:
@@ -27,11 +27,12 @@ def statesearch(unexplored: List, goal: T, path: List, generated: List, newState
     elif goal == head(unexplored):   # if the oldest entry == goal
         return conc(goal, path)
     else:
-        # expand current state, add new states to unexplored list
-        result = statesearch(generateNewStates(head(unexplored), generated, newStates), goal, conc(head(unexplored), path), generated, newStates)   ##### WHY DOES THIS DO TWICE?
+        # expand current state, go deeper into tree
+        result = statesearch(generateNewStates(head(unexplored), generated, newStates), goal, conc(head(unexplored), path), generated, newStates)   ##### GRRRRR RECURSION
         if result != []:   # if a path to the goal was found
             return result
         else:
+            # go back up the tree
             return statesearch(tail(unexplored), goal, generated, newStates)   # RECURSE; tail = everything EXCEPT head = [1:]
 
 def moveU(curState: T):
