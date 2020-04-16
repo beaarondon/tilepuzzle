@@ -24,16 +24,16 @@ def statesearch(unexplored: List, goal: T, path: List, generated: List, newState
     """
     if unexplored == []:   # no more states left to explore
         return []   # no path found to goal
-    elif goal == head(unexplored):   # if the oldest entry == goal
+    elif goal == unexplored[0]:   # if the oldest entry == goal
         return conc(goal, path)
     else:
         # expand current state, go deeper into tree
-        result = statesearch(generateNewStates(head(unexplored), generated, newStates), goal, conc(head(unexplored), path), generated, newStates)   ##### GRRRRR RECURSION
+        result = statesearch(generateNewStates(unexplored[0], generated, newStates), goal, conc(unexplored[0], path), generated, newStates)   ##### GRRRRR RECURSION
         if result != []:   # if a path to the goal was found
             return result
         else:
             # go back up the tree
-            return statesearch(tail(unexplored), goal, generated, newStates)   # RECURSE; tail = everything EXCEPT head = [1:]
+            return statesearch(unexplored[1:], goal, generated, newStates)   # RECURSE
 
 def moveU(curState: T):
     for row in range(len(curState)):
@@ -83,12 +83,6 @@ def swap(oldState: T, row: int, col: int, empty: int, replacement: int, movement
         newState[row][col+1] = empty
     return newState
 
-def reverseEach(listOfLists: List[T]) -> List[T]:
-    result = []
-    for list in listOfLists:
-        result.append(reverse(list))
-    return result
-
 def generateNewStates(curState: T, generated: List, newStates: List) -> List:   # add all new possible moves to list of unexplored states
     u = moveU(curState)
     d = moveD(curState)
@@ -111,9 +105,3 @@ def generateNewStates(curState: T, generated: List, newStates: List) -> List:   
 
 def conc(item: T, list: List[T]):
     return list + [item]
-def head(list: List[T]):
-    return list[0]
-def tail(list: List[T]):
-    return list[1:]
-def reverse(list: List[T]):
-    return list[::-1]
