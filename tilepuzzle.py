@@ -4,24 +4,10 @@ from copy import deepcopy
 T = TypeVar("T")   # List[List[int]]
 
 def tilepuzzle(start: T, goal: T) -> List[T]:
-    return (statesearch([start], goal, [], [start], [], 0))
+    return statesearch([start], goal, [], [start], [], 0)
 
 
 def statesearch(unexplored: List, goal: T, path: List, generated: List, newStates: List, depth: int) -> List[T]:
-    # for state in unexplored:
-    #     # if state not in newStates:
-    #     #     newStates = conc(state, newStates)
-    #     if state in path:
-    #         newStates.remove(state)
-    # """
-    # START: BRUTE FORCE REMOVE DUPLICATE STATES (delete section to see)
-    # """
-    # if len(path) >= 2:
-    #     if path[len(path)-1] == path[len(path)-2]:
-    #         path.remove(path[len(path)-1])
-    # """
-    # END: BRUTE FORCE REMOVE DUPLICATE STATES
-    # """
     if unexplored == []:   # no more states left to explore
         return []   # no path found to goal
     elif goal == unexplored[0]:   # if the oldest entry == goal
@@ -86,7 +72,8 @@ def swap(oldState: T, row: int, col: int, empty: int, replacement: int, movement
         newState[row][col+1] = empty
     return newState
 
-def generateNewStates(curState: T, generated: List, newStates: List) -> List:   # add all new possible moves to list of unexplored states
+# add all new possible moves to list of generated & new states
+def generateNewStates(curState: T, generated: List, newStates: List) -> List:
     u = moveU(curState)
     d = moveD(curState)
     l = moveL(curState)
