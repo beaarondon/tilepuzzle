@@ -4,36 +4,39 @@ from copy import deepcopy
 T = TypeVar("T")   # List[List[int]]
 
 def tilepuzzle(start: T, goal: T) -> List[T]:
-    return (statesearch([start], goal, [], [start], []))
+    return (statesearch([start], goal, [], [start], [], 0))
 
 
-def statesearch(unexplored: List, goal: T, path: List, generated: List, newStates: List) -> List[T]:
-    for state in unexplored:
-        if state not in newStates:
-            newStates = conc(state, newStates)
-        if state in path and state in newStates:
-            newStates.remove(state)
-    """
-    START: BRUTE FORCE REMOVE DUPLICATE STATES (delete section to see)
-    """
-    if len(path) >= 2:
-        if path[len(path)-1] == path[len(path)-2]:
-            path.remove(path[len(path)-1])
-    """
-    END: BRUTE FORCE REMOVE DUPLICATE STATES
-    """
+def statesearch(unexplored: List, goal: T, path: List, generated: List, newStates: List, depth: int) -> List[T]:
+    # for state in unexplored:
+    #     # if state not in newStates:
+    #     #     newStates = conc(state, newStates)
+    #     if state in path:
+    #         newStates.remove(state)
+    # """
+    # START: BRUTE FORCE REMOVE DUPLICATE STATES (delete section to see)
+    # """
+    # if len(path) >= 2:
+    #     if path[len(path)-1] == path[len(path)-2]:
+    #         path.remove(path[len(path)-1])
+    # """
+    # END: BRUTE FORCE REMOVE DUPLICATE STATES
+    # """
     if unexplored == []:   # no more states left to explore
         return []   # no path found to goal
     elif goal == unexplored[0]:   # if the oldest entry == goal
         return conc(goal, path)
     else:
+        depth += 1
         # expand current state, go deeper into tree
-        result = statesearch(generateNewStates(unexplored[0], generated, newStates), goal, conc(unexplored[0], path), generated, newStates)   ##### GRRRRR RECURSION
+        result = statesearch(generateNewStates(unexplored[0], generated, newStates), goal, conc(unexplored[0], path), generated, newStates, depth)   ##### GRRRRR RECURSION
+        if depth >= 20:
+            return result
         if result != []:   # if a path to the goal was found
             return result
         else:
             # go back up the tree
-            return statesearch(unexplored[1:], goal, generated, newStates)   # RECURSE
+            return statesearch(unexplored[1:], goal, path, generated, newStates, depth)   # RECURSE
 
 def moveU(curState: T):
     for row in range(len(curState)):
